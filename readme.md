@@ -10,7 +10,7 @@ It's a Markdown Editor,base on [electron](https://github.com/electron/electron).
 
 #### Then clone this repository:
 
-    git clone https://github.com/electron/electron
+    git clone https://github.com/labrusca/ElecMD
 
 #### Last:
 
