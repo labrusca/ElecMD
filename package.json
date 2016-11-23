@@ -1,6 +1,6 @@
 {
-  "name"    : "Elecmd",
-  "version" : "0.1.0",
+  "name"    : "ElecMD",
+  "version" : "0.2.0-beta",
   "main"    : "main.js"
 }
 

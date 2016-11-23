@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ElecMD v0.1.0-alpha</title>
+    <title>ElecMD {{ version }}</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="js/jquery-2.1.3.min.js"></script>
     <script src="js/marked.js"></script>
   </head>
   <body>
@@ -13,30 +12,136 @@
       <div id="cont" class="row clearfix">
         <div id="input" class="col-md-6">
           <div class="form-group">
-            <label for="name">文本框</label>
+            <label for="name"><h3>Write down your Markdown text:</h3></label>
             <textarea class="form-control" v-model="text" rows="18"></textarea>
           </div>
         </div>
         <div id="show" class="col-md-6">
-            {{{ mdtext }}}
+            {{{ mdtext() }}}
         </div>
       </div>
     </div>
     
     <script src="js/vue.js"></script>
     <script>
-      var app = new Vue({
+      var texta = new Vue({
         el: '#cont',
         data: {
-          text: '# Hello Elecmd!'
+          text: '# Hello ElecMD!'
         },
-        computed: {
+        methods: {
           mdtext: function () {
             return marked(this.text)
           }
         }
-      })
+      });
+      
+      var packageDate = require('./package.json');
+        var version = new Vue({
+          el: 'title',
+          data: {
+            version: 'v' + packageDate['version']
+          }
+        });
+
     </script>
-    
+    <script>
+      const remote = require('electron').remote;
+      const Menu = remote.Menu;
+      const dialog = remote.dialog;
+      var TopMenu = [
+        {
+          label: 'File',
+          submenu: [
+            {
+              label: 'Open',
+              click: function(){
+                var OpenPath = dialog.showOpenDialog({title:"Open File",properties: ['openFile'],
+                                                      filters: [
+                                                        { name:'Markdown& Text Files',extensions:['md','txt']},
+                                                        { name:'All Files',extensions:['*']}
+                                                      ]});
+                // 异步读取文件
+                var fs = require("fs");
+                if (OpenPath){
+                  fs.readFile(OpenPath[0], function (err, Opendata) {
+                    if(err){
+                      return console.error(err);
+                    }
+                  Vue.set(texta,'text',Opendata);
+                  });
+                }
+              }
+            },
+            {
+              label: 'Save',
+              click: function(){
+                var SavePath = dialog.showSaveDialog({title:"Save File",
+                                                      filters: [
+                                                        { name:'Markdown& Text Files',extensions:['md','txt']},
+                                                        { name:'All Files',extensions:['*']}
+                                                      ]});
+                var fs = require("fs");
+                fs.writeFile(SavePath,texta.text,function (err, Opendata) {
+                  if(err){
+                    return console.error(err);
+                  }
+                console.log("Writing done!");
+                });
+              }
+            },
+            {
+              label: 'Quit',
+              accelerator: 'Command+Q',
+              click: function () { remote.app.quit() }
+            }
+          ]
+        },
+        {
+          label: 'about',
+          submenu: [
+            {
+              label: 'View the page',
+              click: function(){
+                require('electron').shell.openExternal('https://github.com/labrusca/ElecMD')
+              }
+            }
+          ]
+        }
+      ];
+
+      var template = [
+          {
+            label: 'Cut',
+            accelerator: 'CmdOrCtrl+X',
+            role: 'cut'
+          },
+          {
+            label: 'Copy',
+            accelerator: 'CmdOrCtrl+C',
+            role: 'copy'
+          },
+          {
+            label: 'Paste',
+            accelerator: 'CmdOrCtrl+V',
+            role: 'paste'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: 'Select All',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectall'
+          }
+      ];
+      var menu = Menu.buildFromTemplate(template)
+      Menu.setApplicationMenu(Menu.buildFromTemplate(TopMenu));
+
+      window.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        menu.popup(remote.getCurrentWindow());
+      }, false);
+    </script>
   </body>
 </html>
