@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ElecMD {{ version }}</title>
+    <title>???</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/simplemde.min.css">
+    <script src="js/simplemde.min.js"></script>
     <script src="js/marked.js"></script>
   </head>
   <body>
@@ -13,36 +15,29 @@
         <div id="input" class="col-md-6">
           <div class="form-group">
             <label for="name"><h3>Write down your Markdown text:</h3></label>
-            <textarea class="form-control" v-model="text" rows="18"></textarea>
+            <textarea id="MDwrite" class="form-control"></textarea>
           </div>
         </div>
         <div id="show" class="col-md-6">
-            {{{ mdtext() }}}
+            <h1>Hello ElecMD!</h1>
         </div>
       </div>
     </div>
-    
-    <script src="js/vue.js"></script>
+
     <script>
-      var texta = new Vue({
-        el: '#cont',
-        data: {
-          text: '# Hello ElecMD!'
-        },
-        methods: {
-          mdtext: function () {
-            return marked(this.text)
-          }
-        }
+    var SimplemdeSettings = { 
+          toolbar: false,
+          element: document.getElementById("MDwrite")
+      };
+      var simplemde = new SimpleMDE(SimplemdeSettings);
+      simplemde.codemirror.on("change", function(){
+        document.getElementById("show").innerHTML = marked(simplemde.value());
       });
-      
+    </script>
+    
+    <script>
       var packageDate = require('./package.json');
-        var version = new Vue({
-          el: 'title',
-          data: {
-            version: 'v' + packageDate['version']
-          }
-        });
+      document.title = packageDate['name'] + ' v' + packageDate['version'];
 
     </script>
     <script>
@@ -64,11 +59,12 @@
                 // 异步读取文件
                 var fs = require("fs");
                 if (OpenPath){
-                  fs.readFile(OpenPath[0], function (err, Opendata) {
+                  fs.readFile(OpenPath[0],{encoding:'utf8',flag:'r'}, function (err, Opendata) {
                     if(err){
                       return console.error(err);
                     }
-                  Vue.set(texta,'text',Opendata);
+                    simplemde.value(Opendata);
+                    //Vue.set(texta,'text',Opendata);
                   });
                 }
               }
@@ -82,7 +78,7 @@
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
                 var fs = require("fs");
-                fs.writeFile(SavePath,texta.text,function (err, Opendata) {
+                fs.writeFile(SavePath,simplemde.value(),function (err) {
                   if(err){
                     return console.error(err);
                   }
