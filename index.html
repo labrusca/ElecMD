@@ -30,14 +30,14 @@
           element: document.getElementById("MDwrite")
       };
       var simplemde = new SimpleMDE(SimplemdeSettings);
-      simplemde.codemirror.on("change", function(){
+      simplemde.codemirror.on("change",() => {
         document.getElementById("show").innerHTML = marked(simplemde.value());
       });
     </script>
     
     <script>
       var packageDate = require('./package.json');
-      document.title = packageDate['name'] + ' v' + packageDate['version'];
+      document.title = packageDate['name'];
 
     </script>
     <script>
@@ -50,16 +50,16 @@
           submenu: [
             {
               label: 'Open',
-              click: function(){
-                var OpenPath = dialog.showOpenDialog({title:"Open File",properties: ['openFile'],
+              click: () => {
+                const OpenPath = dialog.showOpenDialog({title:"Open File",properties: ['openFile'],
                                                       filters: [
                                                         { name:'Markdown& Text Files',extensions:['md','txt']},
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
                 // 异步读取文件
-                var fs = require("fs");
+                const fs = require("fs");
                 if (OpenPath){
-                  fs.readFile(OpenPath[0],{encoding:'utf8',flag:'r'}, function (err, Opendata) {
+                  fs.readFile(OpenPath[0],{encoding:'utf8',flag:'r'}, (err, Opendata) => {
                     if(err){
                       return console.error(err);
                     }
@@ -71,37 +71,50 @@
             },
             {
               label: 'Save',
-              click: function(){
+              click: () => {
                 var SavePath = dialog.showSaveDialog({title:"Save File",
                                                       filters: [
                                                         { name:'Markdown& Text Files',extensions:['md','txt']},
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
                 var fs = require("fs");
-                fs.writeFile(SavePath,simplemde.value(),function (err) {
+                fs.writeFile(SavePath,simplemde.value(),(err) => {
                   if(err){
                     return console.error(err);
                   }
-                console.log("Writing done!");
+                  //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
+                  const myNotification = new Notification('ELecMD Notification', {
+                    body: 'File saved!'
+                  });
+
+                  myNotification.onclick = () => {
+                    console.log("Writing done!");
+                  }
                 });
               }
             },
             {
               label: 'Quit',
               accelerator: 'Command+Q',
-              click: function () { remote.app.quit() }
+              click: () => { remote.app.quit() }
             }
           ]
         },
         {
-          label: 'about',
+          label: 'Help',
           submenu: [
             {
-              label: 'View the page',
-              click: function(){
+              label: 'Fork ElecMD on Github',
+              click:() => {
                 require('electron').shell.openExternal('https://github.com/labrusca/ElecMD')
               }
-            }
+            },
+            {
+              label: 'About',
+              click:() => {
+                alert(packageDate['version'])
+              }
+            },
           ]
         }
       ];
@@ -134,7 +147,7 @@
       var menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(Menu.buildFromTemplate(TopMenu));
 
-      window.addEventListener('contextmenu', function (e) {
+      window.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         menu.popup(remote.getCurrentWindow());
       }, false);
