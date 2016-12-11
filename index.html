@@ -25,11 +25,11 @@
     </div>
 
     <script>
-    var SimplemdeSettings = { 
+    const SimplemdeSettings = { 
           toolbar: false,
           element: document.getElementById("MDwrite")
       };
-      var simplemde = new SimpleMDE(SimplemdeSettings);
+      const simplemde = new SimpleMDE(SimplemdeSettings);
       simplemde.codemirror.on("change",() => {
         document.getElementById("show").innerHTML = marked(simplemde.value());
       });
@@ -44,7 +44,7 @@
       const remote = require('electron').remote;
       const Menu = remote.Menu;
       const dialog = remote.dialog;
-      var TopMenu = [
+      let TopMenu = [
         {
           label: 'File',
           submenu: [
@@ -57,14 +57,13 @@
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
                 // 异步读取文件
-                const fs = require("fs");
+                let fs = require("fs");
                 if (OpenPath){
                   fs.readFile(OpenPath[0],{encoding:'utf8',flag:'r'}, (err, Opendata) => {
                     if(err){
                       return console.error(err);
                     }
                     simplemde.value(Opendata);
-                    //Vue.set(texta,'text',Opendata);
                   });
                 }
               }
@@ -72,12 +71,12 @@
             {
               label: 'Save',
               click: () => {
-                var SavePath = dialog.showSaveDialog({title:"Save File",
+                const SavePath = dialog.showSaveDialog({title:"Save File",
                                                       filters: [
                                                         { name:'Markdown& Text Files',extensions:['md','txt']},
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
-                var fs = require("fs");
+                let fs = require("fs");
                 fs.writeFile(SavePath,simplemde.value(),(err) => {
                   if(err){
                     return console.error(err);
@@ -119,7 +118,7 @@
         }
       ];
 
-      var template = [
+      let template = [
           {
             label: 'Cut',
             accelerator: 'CmdOrCtrl+X',
@@ -144,7 +143,7 @@
             role: 'selectall'
           }
       ];
-      var menu = Menu.buildFromTemplate(template)
+      const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(Menu.buildFromTemplate(TopMenu));
 
       window.addEventListener('contextmenu', (e) => {
