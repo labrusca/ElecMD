@@ -2,7 +2,7 @@ It's a Markdown Editor,base on [electron](https://github.com/electron/electron).
 ****************************
 # How to use
 
-#### First,you need to install npm & electron.  for fedora,do:
+#### First,you need to install npm & electron.  for fedora 25,do:
 
 ```
 sudo dnf install nodejs
@@ -15,16 +15,22 @@ npm install electron
 git clone https://github.com/labrusca/ElecMD
 ```
 
+```
+cd ElecMD
+```
+
 #### Run:
 
 ```
-electron ./ElecMD
+electron ./src    #unstable
 ```
 or
 ```
-electron ./ElecMD/app.asar
+electron ./package/app.asar
 ```
 #### Enjoy it!
+
+Use the rebuild-asar.sh to package when you modify
 
 Tested on fedora 25
 

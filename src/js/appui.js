@@ -1,59 +1,21 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>???</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/simplemde.min.css">
-    <script src="js/simplemde.min.js"></script>
-    <script src="js/marked.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <div id="cont" class="row clearfix">
-        <div id="input" class="col-md-6">
-          <div class="form-group">
-            <label for="name"><h3>Write down your Markdown text:</h3></label>
-            <textarea id="MDwrite" class="form-control"></textarea>
-          </div>
-        </div>
-        <div id="show" class="col-md-6">
-            <h1>Hello ElecMD!</h1>
-        </div>
-      </div>
-    </div>
-
-    <script>
-    const SimplemdeSettings = { 
-          toolbar: false,
-          element: document.getElementById("MDwrite")
-      };
-      const simplemde = new SimpleMDE(SimplemdeSettings);
-      simplemde.codemirror.on("change",() => {
-        document.getElementById("show").innerHTML = marked(simplemde.value());
-      });
-    </script>
-    
-    <script>
-      var packageDate = require('./package.json');
-      document.title = packageDate['name'];
-
-    </script>
-    <script>
       const remote = require('electron').remote;
       const Menu = remote.Menu;
       const dialog = remote.dialog;
+      let OpenPath,SavePath,OpenFiledata;
+      const packageData = require('./package.json');
+      document.title = packageData['name'];
       let TopMenu = [
         {
           label: 'File',
           submenu: [
             {
               label: 'Open',
+              accelerator: 'CmdOrCtrl+O',       
               click: () => {
-                const OpenPath = dialog.showOpenDialog({title:"Open File",properties: ['openFile'],
+                OpenPath = dialog.showOpenDialog({title:"Open File",properties: ['openFile'],
                                                       filters: [
-                                                        { name:'Markdown& Text Files',extensions:['md','txt']},
+                                                        { name:'Markdown Files',extensions:['md']},
+                                                        { name:'Text Files',extensions:['txt']},
                                                         { name:'All Files',extensions:['*']}
                                                       ]});
                 // 异步读取文件
@@ -63,19 +25,27 @@
                     if(err){
                       return console.error(err);
                     }
-                    simplemde.value(Opendata);
+                    OpenFiledata = Opendata;
+                    simplemde.value(OpenFiledata);
+                    document.title = `${OpenPath} - ${packageData['name']}`;
                   });
                 }
               }
             },
             {
               label: 'Save',
+              accelerator: 'CmdOrCtrl+S', 
               click: () => {
-                const SavePath = dialog.showSaveDialog({title:"Save File",
-                                                      filters: [
-                                                        { name:'Markdown& Text Files',extensions:['md','txt']},
-                                                        { name:'All Files',extensions:['*']}
-                                                      ]});
+                if(OpenPath){
+                  SavePath = OpenPath[0];
+                }
+                else{
+                  SavePath = dialog.showSaveDialog({title:"Save File",
+                                                        filters: [
+                                                          { name:'Markdown Files',extensions:['md']},
+                                                          { name:'All Files',extensions:['*']}
+                                                        ]});
+                }
                 let fs = require("fs");
                 fs.writeFile(SavePath,simplemde.value(),(err) => {
                   if(err){
@@ -95,7 +65,9 @@
             {
               label: 'Quit',
               accelerator: 'Command+Q',
-              click: () => { remote.app.quit() }
+              click: () => {
+                  remote.app.quit()
+              }
             }
           ]
         },
@@ -109,10 +81,8 @@
               }
             },
             {
-              label: 'About',
-              click:() => {
-                alert(packageDate['version'])
-              }
+              label: `Version: ${packageData['version']}`,
+              enabled: false
             },
           ]
         }
@@ -150,6 +120,3 @@
         e.preventDefault();
         menu.popup(remote.getCurrentWindow());
       }, false);
-    </script>
-  </body>
-</html>

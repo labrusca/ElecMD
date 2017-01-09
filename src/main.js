@@ -4,6 +4,8 @@ const {app} = electron
 // 创建原生浏览器窗口的模块。
 const {BrowserWindow} = electron
 
+const ipc = require('electron').ipcMain
+
 // 保持一个对于 window 对象的全局引用，如果你不这样做，
 // 当 JavaScript 对象被垃圾回收， window 会被自动地关闭
 let mainWindow
@@ -16,7 +18,7 @@ function createWindow () {
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // 启用开发工具。
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // 当 window 被关闭，这个事件会被触发。
   mainWindow.on('closed', () => {
@@ -31,7 +33,6 @@ function createWindow () {
 // 创建浏览器窗口时，调用这个函数。
 // 部分 API 在 ready 事件触发后才能使用。
 app.on('ready', createWindow)
-
 // 当全部窗口关闭时退出。
 app.on('window-all-closed', () => {
   // 在 macOS 上，除非用户用 Cmd + Q 确定地退出，

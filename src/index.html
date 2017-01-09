@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>???</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/simplemde.min.css">
+    <script src="js/simplemde.min.js"></script>
+    <script src="js/marked.js"></script>
+  </head>
+  <script src="js/appui.js">
+  </script>
+  
+  <body>
+    <div class="container">
+      <div id="cont" class="row clearfix">
+        <div id="input" class="col-md-6">
+          <div class="form-group">
+            <label for="name"><h3>Write down your Markdown text:</h3></label>
+            <textarea id="MDwrite" class="form-control"></textarea>
+          </div>
+        </div>
+        <div id="show" class="col-md-6">
+            <h1>Hello ElecMD!</h1>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SimplemdeSettings = { 
+          toolbar: false,
+          element: document.getElementById("MDwrite")
+      };
+      const simplemde = new SimpleMDE(SimplemdeSettings);
+      simplemde.codemirror.on("change",() => {
+        document.getElementById("show").innerHTML = marked(simplemde.value());
+      });
+    </script>
+  </body>
+</html>
