@@ -1,4 +1,5 @@
       const remote = require('electron').remote;
+      const ipc = require('electron').ipcRenderer
       const Menu = remote.Menu;
       const dialog = remote.dialog;
       let OpenPath,SavePath,OpenFiledata;
@@ -46,20 +47,51 @@
                                                           { name:'All Files',extensions:['*']}
                                                         ]});
                 }
-                let fs = require("fs");
-                fs.writeFile(SavePath,simplemde.value(),(err) => {
-                  if(err){
-                    return console.error(err);
-                  }
-                  //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
-                  const myNotification = new Notification('ELecMD Notification', {
-                    body: 'File saved!'
-                  });
+                if(SavePath){
+                  let fs = require("fs");
+                  fs.writeFile(SavePath,simplemde.value(),(err) => {
+                    if(err){
+                      return console.error(err);
+                    }
+                    //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
+                    const myNotification = new Notification('ELecMD Notification', {
+                      body: 'File saved!'
+                    });
 
-                  myNotification.onclick = () => {
-                    console.log("Writing done!");
-                  }
-                });
+                    myNotification.onclick = () => {
+                      console.log("Writing done!");
+                    }
+                  });
+                }
+                else return 0;
+              }
+            },
+            {
+              label: 'Save as...',
+              accelerator: 'CmdOrCtrl+Shift+S', 
+              click: () => {
+                SavePath = dialog.showSaveDialog({title:"Save File as",
+                                                      filters: [
+                                                        { name:'Markdown Files',extensions:['md']},
+                                                        { name:'All Files',extensions:['*']}
+                                                      ]});
+                if(SavePath){
+                  let fs = require("fs");
+                  fs.writeFile(SavePath,simplemde.value(),(err) => {
+                    if(err){
+                      return console.error(err);
+                    }
+                    //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
+                    const myNotification = new Notification('ELecMD Notification', {
+                      body: 'File saved!'
+                    });
+
+                    myNotification.onclick = () => {
+                      console.log("Writing done!");
+                    }
+                  });
+                }
+                else return 0;
               }
             },
             {
@@ -72,12 +104,19 @@
           ]
         },
         {
-          label: 'Help',
+          label: 'About',
           submenu: [
             {
               label: 'Fork ElecMD on Github',
               click:() => {
                 require('electron').shell.openExternal('https://github.com/labrusca/ElecMD')
+              }
+            },
+            {
+              label: 'DeveTools',
+              accelerator: 'CommandOrControl+F12',
+              click:() => {
+                ipc.send('open-DevTools', 'ping')
               }
             },
             {
