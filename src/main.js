@@ -35,6 +35,7 @@ app.on('ready', () => {
   createWindow()
   
   })
+
 // 当全部窗口关闭时退出。
 app.on('window-all-closed', () => {
   // 在 macOS 上，除非用户用 Cmd + Q 确定地退出，
