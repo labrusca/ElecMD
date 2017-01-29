@@ -1,6 +1,6 @@
-import { app, remote } from 'electron';
-import fs from 'fs';
-import path from 'path';
+const { app, remote } = require('electron');
+const fs = require('fs');
+const path = require('path');
 
 const eApp = app || remote.app;
 
@@ -20,10 +20,11 @@ const localeLinks = {
   'en-TT': 'en-US',
   'en-ZA': 'en-US',
   'en-ZW': 'en-US',
-  'pt-BR': 'pt-BR',
-  'pt-PT': 'pt-BR',
+  'pt-BR': 'en-US',
+  'pt-PT': 'en-US',
   'zh-CN': 'zh-CN',
   'zh-TW': 'zh-TW',
+  'zh-HK': 'zh-HK',
 };
 
 export default class TranslationProvider {

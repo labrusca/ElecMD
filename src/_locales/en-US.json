@@ -1,0 +1,18 @@
+{
+    "menubar-file-open": "Open",
+    "menubar-file-save": "Save",
+    "menubar-file-saveas": "Save as",
+    "menubar-file-quit": "Quit",
+
+    "about-fork": "Fork ElecMD on Github",
+    "about-Devtool": "DevepTools",
+    "sbout-version": "Version",
+
+    "dialog-open-title": "Open File",
+    "dialog-save-title": "Save File",
+    "dialog-filetype-md": "Markdown Files",
+    "dialog-filetype-txt": "Text Files",
+    "dialog-filetype-all": "All Files",
+
+    "masg-filesave": "File saved!",
+}

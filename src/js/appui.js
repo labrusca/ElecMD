@@ -2,14 +2,18 @@ const remote = require('electron').remote;
 const ipc = require('electron').ipcRenderer
 const Menu = remote.Menu;
 const dialog = remote.dialog;
-const fs = require("fs");
+const fs = require('fs');
+const TranslationsProvider = require('../_locales/_provider');
+
 let OpenPath, SavePath, OpenFiledata;
 const packageData = require('./package.json');
 document.title = packageData['name'];
+global.TranslationProvider = new TranslationsProvider();
+
 const TopMenu = [{
         label: 'File',
         submenu: [{
-                label: 'Open',
+                label: TranslationProvider.query("menubar-file-open"),
                 accelerator: 'CmdOrCtrl+O',
                 click: () => {
                     OpenPath = dialog.showOpenDialog({
@@ -133,7 +137,7 @@ const TopMenu = [{
                 }
             },
             {
-                label: 'DeveTools',
+                label: 'DevepTools',
                 accelerator: 'CommandOrControl+F12',
                 click: () => {
                     ipc.send('open-DevTools', 'ping')
