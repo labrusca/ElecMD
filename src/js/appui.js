@@ -3,32 +3,42 @@ const ipc = require('electron').ipcRenderer
 const Menu = remote.Menu;
 const dialog = remote.dialog;
 const fs = require('fs');
-const TranslationsProvider = require('../_locales/_provider');
+const eApp = remote.app
+
+const Lang = require('lang.js');
+const masg = require('traninfo');
 
 let OpenPath, SavePath, OpenFiledata;
 const packageData = require('./package.json');
 document.title = packageData['name'];
-global.TranslationProvider = new TranslationsProvider();
+
+const local = eApp.getLocale().substring(0,2);
+
+let lang = new Lang({
+    messages: masg,
+    locale: 'en',
+    fallback: 'en'
+});
 
 const TopMenu = [{
-        label: 'File',
+        label: lang.get('menubar.file'),
         submenu: [{
-                label: TranslationProvider.query("menubar-file-open"),
+                label: lang.get('menubar.file-open'),
                 accelerator: 'CmdOrCtrl+O',
                 click: () => {
                     OpenPath = dialog.showOpenDialog({
-                        title: "Open File",
+                        title: lang.get('dialog.open-title'),
                         properties: ['openFile'],
                         filters: [{
-                                name: 'Markdown Files',
+                                name: lang.get('dialog.filetype-md'),
                                 extensions: ['md']
                             },
                             {
-                                name: 'Text Files',
+                                name: lang.get('dialog.filetype-txt'),
                                 extensions: ['txt']
                             },
                             {
-                                name: 'All Files',
+                                name: lang.get('dialog.filetype-all'),
                                 extensions: ['*']
                             }
                         ]
@@ -50,20 +60,20 @@ const TopMenu = [{
                 }
             },
             {
-                label: 'Save',
+                label: lang.get('menubar.file-save'),
                 accelerator: 'CmdOrCtrl+S',
                 click: () => {
                     if (OpenPath) {
                         SavePath = OpenPath[0];
                     } else {
                         SavePath = dialog.showSaveDialog({
-                            title: "Save File",
+                            title: lang.get('dialog.save-title'),
                             filters: [{
-                                    name: 'Markdown Files',
+                                    name: lang.get('dialog.filetype-md'),
                                     extensions: ['md']
                                 },
                                 {
-                                    name: 'All Files',
+                                    name: lang.get('dialog.filetype-all'),
                                     extensions: ['*']
                                 }
                             ]
@@ -76,7 +86,7 @@ const TopMenu = [{
                             }
                             //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
                             const myNotification = new Notification('ELecMD Notification', {
-                                body: 'File saved!'
+                                body: lang.get('masg.filesave')
                             });
 
                             myNotification.onclick = () => {
@@ -87,17 +97,17 @@ const TopMenu = [{
                 }
             },
             {
-                label: 'Save as...',
+                label: lang.get('menubar.file-saveas'),
                 accelerator: 'CmdOrCtrl+Shift+S',
                 click: () => {
                     SavePath = dialog.showSaveDialog({
-                        title: "Save File as",
+                        title: lang.get('dialog.saveas-title'),
                         filters: [{
-                                name: 'Markdown Files',
+                                name: lang.get('dialog.filetype-md'),
                                 extensions: ['md']
                             },
                             {
-                                name: 'All Files',
+                                name: lang.get('dialog.filetype-all'),
                                 extensions: ['*']
                             }
                         ]
@@ -109,7 +119,7 @@ const TopMenu = [{
                             }
                             //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
                             const myNotification = new Notification('ELecMD Notification', {
-                                body: 'File saved!'
+                                body: lang.get('masg.filesave')
                             });
 
                             myNotification.onclick = () => {
@@ -120,7 +130,7 @@ const TopMenu = [{
                 }
             },
             {
-                label: 'Quit',
+                label: lang.get('menubar.file-quit'),
                 accelerator: 'Command+Q',
                 click: () => {
                     remote.app.quit()
@@ -129,40 +139,40 @@ const TopMenu = [{
         ]
     },
     {
-        label: 'About',
+        label: lang.get('about.about'),
         submenu: [{
-                label: 'Fork ElecMD on Github',
+                label: lang.get('about.fork'),
                 click: () => {
                     require('electron').shell.openExternal('https://github.com/labrusca/ElecMD')
                 }
             },
             {
-                label: 'DevepTools',
+                label: lang.get('about.Devtool'),
                 accelerator: 'CommandOrControl+F12',
                 click: () => {
                     ipc.send('open-DevTools', 'ping')
                 }
             },
             {
-                label: `Version: ${packageData['version']}`,
+                label: `${lang.get('about.version')}: ${packageData['version']}`,
                 enabled: false
             },
         ]
     }
 ];
 
-let template = [{
-        label: 'Cut',
+const template = [{
+        label: lang.get('mousemenu.cut'),
         accelerator: 'CmdOrCtrl+X',
         role: 'cut'
     },
     {
-        label: 'Copy',
+        label: lang.get('mousemenu.copy'),
         accelerator: 'CmdOrCtrl+C',
         role: 'copy'
     },
     {
-        label: 'Paste',
+        label: lang.get('mousemenu.paste'),
         accelerator: 'CmdOrCtrl+V',
         role: 'paste'
     },
@@ -170,7 +180,7 @@ let template = [{
         type: 'separator'
     },
     {
-        label: 'Select All',
+        label: lang.get('mousemenu.selectall'),
         accelerator: 'CmdOrCtrl+A',
         role: 'selectall'
     }
@@ -200,3 +210,4 @@ window.addEventListener('drop', (e) => {
                 }
     );
 }, false);
+

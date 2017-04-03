@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="css/simplemde.min.css">
     <script src="js/simplemde.min.js"></script>
     <script src="js/marked.js"></script>
+    <script src="js/appui.js"></script>
   </head>
-  <script src="js/appui.js">
-  </script>
   
   <body>
     <div class="container">
@@ -36,6 +35,8 @@
       simplemde.codemirror.on("change",() => {
         document.getElementById("show").innerHTML = marked(simplemde.value());
       });
+
     </script>
+
   </body>
 </html>
