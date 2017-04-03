@@ -14,6 +14,7 @@ function createWindow () {
   // 创建浏览器窗口。
   mainWindow = new BrowserWindow({width: 1200, height: 600})
   // 加载应用的 index.html。
+  //mainWindow.openDevTools();
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   

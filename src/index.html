@@ -16,12 +16,12 @@
       <div id="cont" class="row clearfix">
         <div id="input" class="col-md-6">
           <div class="form-group">
-            <label for="name"><h3>Write down your Markdown text:</h3></label>
+            <label id="info" for="name">   </label>
             <textarea id="MDwrite" class="form-control"></textarea>
           </div>
         </div>
         <div id="show" class="col-md-6">
-            <h1>Hello ElecMD!</h1>
+
         </div>
       </div>
     </div>
@@ -36,6 +36,8 @@
         document.getElementById("show").innerHTML = marked(simplemde.value());
       });
 
+      document.getElementById("info").innerHTML = `<h3>${lang.get('masg.inputinfo')}</h3>`;
+      document.getElementById("show").innerHTML = `<h1>${lang.get('masg.displayinfo')}</h1>`;
     </script>
 
   </body>

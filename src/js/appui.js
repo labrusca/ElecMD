@@ -16,7 +16,7 @@ const local = eApp.getLocale().substring(0,2);
 
 let lang = new Lang({
     messages: masg,
-    locale: 'en',
+    locale: local,
     fallback: 'en'
 });
 
