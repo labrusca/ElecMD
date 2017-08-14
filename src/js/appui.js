@@ -9,6 +9,7 @@ const Lang = require('lang.js');
 const masg = require('traninfo');
 
 let OpenPath, SavePath, OpenFiledata;
+let isDropOpen = false;
 const packageData = require('./package.json');
 document.title = packageData['name'];
 
@@ -64,7 +65,11 @@ const TopMenu = [{
                 accelerator: 'CmdOrCtrl+S',
                 click: () => {
                     if (OpenPath) {
-                        SavePath = OpenPath[0];
+                        if (isDropOpen){
+                            SavePath = OpenPath;
+                        } else {
+                            SavePath = OpenPath[0];
+                        }
                     } else {
                         SavePath = dialog.showSaveDialog({
                             title: lang.get('dialog.save-title'),
@@ -85,7 +90,7 @@ const TopMenu = [{
                                 return console.error(err);
                             }
                             //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
-                            const myNotification = new Notification('ELecMD Notification', {
+                            let myNotification = new Notification('ELecMD Notification', {
                                 body: lang.get('masg.filesave')
                             });
 
@@ -118,7 +123,7 @@ const TopMenu = [{
                                 return console.error(err);
                             }
                             //Display the notification when file has been saved,work on Linux,Mac os,Windows 10
-                            const myNotification = new Notification('ELecMD Notification', {
+                            let myNotification = new Notification('ELecMD Notification', {
                                 body: lang.get('masg.filesave')
                             });
 
@@ -161,7 +166,7 @@ const TopMenu = [{
     }
 ];
 
-const template = [{
+let template = [{
         label: lang.get('mousemenu.cut'),
         accelerator: 'CmdOrCtrl+X',
         role: 'cut'
@@ -185,7 +190,7 @@ const template = [{
         role: 'selectall'
     }
 ];
-const menu = Menu.buildFromTemplate(template)
+let menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(Menu.buildFromTemplate(TopMenu));
 
 window.addEventListener('contextmenu', (e) => {
@@ -196,7 +201,9 @@ window.addEventListener('contextmenu', (e) => {
 window.addEventListener('drop', (e) => {
     e.stopPropagation();
     e.preventDefault();
-    const f = e.dataTransfer.files[0];
+    let f = e.dataTransfer.files[0];
+    isDropOpen = true;
+    OpenPath = f.path;
     fs.readFile(f.path, {
                 encoding: 'utf8',
                 flag: 'r'
