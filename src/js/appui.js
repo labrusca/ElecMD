@@ -9,7 +9,7 @@ const Lang = require('lang.js');
 const masg = require('traninfo');
 
 let OpenPath, SavePath, OpenFiledata;
-let isDropOpen = false;
+let OpeningPath;
 const packageData = require('./package.json');
 document.title = packageData['name'];
 
@@ -55,7 +55,8 @@ const TopMenu = [{
                             }
                             OpenFiledata = Opendata;
                             simplemde.value(OpenFiledata);
-                            document.title = `${OpenPath} - ${packageData['name']}`;
+                            OpeningPath = OpenPath[0];
+                            document.title = `${OpeningPath} - ${packageData['name']}`;
                         });
                     }
                 }
@@ -64,12 +65,8 @@ const TopMenu = [{
                 label: lang.get('menubar.file-save'),
                 accelerator: 'CmdOrCtrl+S',
                 click: () => {
-                    if (OpenPath) {
-                        if (isDropOpen){
-                            SavePath = OpenPath;
-                        } else {
-                            SavePath = OpenPath[0];
-                        }
+                    if (OpeningPath) {
+                        SavePath = OpeningPath;
                     } else {
                         SavePath = dialog.showSaveDialog({
                             title: lang.get('dialog.save-title'),
@@ -98,6 +95,7 @@ const TopMenu = [{
                                 console.log("Writing done!");
                             }
                         });
+                        OpeningPath = SavePath;
                     } else return 0;
                 }
             },
@@ -131,6 +129,7 @@ const TopMenu = [{
                                 console.log("Writing done!");
                             }
                         });
+                        OpeningPath = SavePath;
                     } else return 0;
                 }
             },
@@ -202,8 +201,6 @@ window.addEventListener('drop', (e) => {
     e.stopPropagation();
     e.preventDefault();
     let f = e.dataTransfer.files[0];
-    isDropOpen = true;
-    OpenPath = f.path;
     fs.readFile(f.path, {
                 encoding: 'utf8',
                 flag: 'r'
@@ -213,8 +210,9 @@ window.addEventListener('drop', (e) => {
                     }
                     OpenFiledata = Opendata;
                     simplemde.value(OpenFiledata);
-                    document.title = `${f.path} - ${packageData['name']}`;
                 }
     );
+    document.title = `${f.path} - ${packageData['name']}`;
+    OpeningPath = f.path;
 }, false);
 
